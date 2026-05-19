@@ -1,0 +1,12 @@
+<?php
+session_start();
+require_once '../app/core/App.php';
+class middleware {
+    public function checklogin() {
+        $publicPages = ['/QLSV/public/home/login'];
+        if (!isset($_SESSION['username']) && !in_array($_SERVER['REQUEST_URI'], $publicPages)) {
+            header('Location: /QLSV/public/home/login');
+            exit;
+        }
+    }
+}
