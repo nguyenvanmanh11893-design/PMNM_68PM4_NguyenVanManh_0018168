@@ -3,10 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách sinh viên</title>
+    <title><?php if (!empty($title)) echo $title; ?></title>
 </head>
 <body>
-    <h1> Danh sách sinh viên</h1>
+    <h1> <?php if (!empty($title)) echo $title; ?></h1>
+    <table border="1">
+        <tr>
+            <th>MSSV</th>
+            <th>Tên</th>
+            <th>Giới tính</th>
+        </tr>
+        
+            <?php if (!empty($sinhviens) && is_array($sinhviens)): ?>
+                <?php foreach($sinhviens as $sinhvien): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($sinhvien['mssv']); ?></td>
+                    <td><?php echo htmlspecialchars($sinhvien['ten']); ?></td>
+                    <td><?php echo htmlspecialchars($sinhvien['gioitinh']); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4">Không có sinh viên nào.</td>
+                </tr>
+            <?php endif; ?>
+    
+        </table>
+
     
 </body>
 </html>
