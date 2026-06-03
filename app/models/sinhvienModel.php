@@ -14,4 +14,12 @@ class sinhvienModel{
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function createSinhvien($mssv, $ten, $gioitinh){
+        $sql = "INSERT INTO sinhvien (mssv, ten, gioitinh) VALUES (:mssv, :ten, :gioitinh)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':mssv', $mssv);
+        $stmt->bindParam(':ten', $ten);
+        $stmt->bindParam(':gioitinh', $gioitinh);
+        return $stmt->execute();
+    }
 }

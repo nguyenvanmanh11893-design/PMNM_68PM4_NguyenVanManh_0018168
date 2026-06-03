@@ -14,8 +14,8 @@
             <th>Giới tính</th>
         </tr>
         
-            <?php if (!empty($sinhviens) && is_array($sinhviens)): ?>
-                <?php foreach($sinhviens as $sinhvien): ?>
+            <?php if (!empty($students) && is_array($students)): ?>
+                <?php foreach($students as $sinhvien): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($sinhvien['mssv']); ?></td>
                     <td><?php echo htmlspecialchars($sinhvien['ten']); ?></td>
