@@ -9,7 +9,7 @@ class sinhvienModel{
         $this->conn = $db->conn;
     }
     public function getAllSinhVien(){
-        $sql = "SELECT * FROM sinhvien";
+        $sql = "SELECT * FROM sinhvien ";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -22,4 +22,21 @@ class sinhvienModel{
         $stmt->bindParam(':gioitinh', $gioitinh);
         return $stmt->execute();
     }
+    public function paging($limit, $offset , $search = ''){ {
+        $sql = "SELECT * FROM sinhvien LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        
+        //tính tổng số bản ghi
+        $sqlCount = "SELECT COUNT(*) as total FROM sinhvien";
+        $stmtCount = $this->conn->query($sqlCount);
+        $totalRecord = $stmtCount->fetchColumn();
+        $totalRecord = ceil($totalRecord / $limit);
+        return ['sinhviens' => $result, 'totalpage' => $totalRecord];
+    }
+}
 }

@@ -2,15 +2,25 @@
 require_once '../app/core/Controller.php';
 
 class sinhvien extends Controller {
-    public function index() {
+    public function index($page = 1) {
+        // Lấy dữ liệu phân trang sinh viên từ model
+        $currentpage = max(1, (int)$page); 
+        $limit = 3;
+        $offset = ($currentpage - 1) * $limit;
+        
+
         $sinhvienModel = $this->model('sinhvienModel');
-        $sinhviens = $sinhvienModel->getAllSinhVien();
+        $result = $sinhvienModel->paging($limit, $offset);
+        $sinhviens = $result['sinhviens'];
+        $totalpage = $result['totalpage'];
 
         // Chỉ gọi layout một lần, truyền đủ viewname và data
         $this->view('layout/mainLayout', [
             'viewname' => 'sinhvien/index',
             'students' => $sinhviens,   // đặt tên rõ ràng
-            'title'    => 'Danh sách sinh viên'
+            'title'    => 'Danh sách sinh viên',
+            'totalpage' => $totalpage,
+            'currentpage' => $currentpage
         ]);
     }
 
@@ -36,4 +46,5 @@ class sinhvien extends Controller {
             }
         }
     }
+
 }
