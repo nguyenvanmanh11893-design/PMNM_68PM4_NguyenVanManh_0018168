@@ -39,4 +39,30 @@ class sinhvienModel{
         return ['sinhviens' => $result, 'totalpage' => $totalRecord];
     }
 }
+// Lấy thông tin 1 sinh viên theo MSSV để điền vào form Sửa
+    public function getSinhvienById($id) {
+        $sql = "SELECT * FROM sinhvien WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC); 
+    }
+
+    // Thực thi câu lệnh Cập nhật sinh viên
+    public function updateSinhvien($id, $ten, $gioitinh) {
+        $sql = "UPDATE sinhvien SET ten = :ten, gioitinh = :gioitinh WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':ten', $ten);
+        $stmt->bindParam(':gioitinh', $gioitinh);
+        return $stmt->execute();
+    }
+
+    // Thực thi câu lệnh Xóa sinh viên
+    public function deleteSinhvien($id) {
+        $sql = "DELETE FROM sinhvien WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }

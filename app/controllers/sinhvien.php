@@ -46,5 +46,48 @@ class sinhvien extends Controller {
             }
         }
     }
+    public function update($id = '') {
+        $sinhvienModel = $this->model('sinhvienModel');
 
-}
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $mssv = $_POST['mssv'] ?? '';
+            $ten = $_POST['ten'] ?? '';
+            $gioitinh = $_POST['gioitinh'] ?? '';
+
+            if ($sinhvienModel->updateSinhvien($id, $mssv, $ten, $gioitinh)) {
+                header('Location: /QLSV/public/sinhvien');
+                exit();
+            } else {
+                echo "Lỗi khi cập nhật! Mã số sinh viên này có thể đã tồn tại.";
+            }
+        } 
+        else {
+            if (empty($id)) {
+                header('Location: /QLSV/public/sinhvien');
+                exit();
+            }
+
+            $sinhvien = $sinhvienModel->getSinhvienById($id);
+            if (!$sinhvien) {
+                echo "Không tìm thấy sinh viên.";
+                return;
+            }
+
+            $this->view('layout/mainLayout', [
+                'viewname' => 'sinhvien/update',
+                'title'    => 'Cập nhật sinh viên',
+                'sinhvien' => $sinhvien 
+            ]);
+        }
+    }
+
+    public function delete($id = '') {
+        if (!empty($id)) {
+            $sinhvienModel = $this->model('sinhvienModel');
+            $sinhvienModel->deleteSinhvien($id);
+        }
+        header('Location: /QLSV/public/sinhvien');
+        exit();
+    }
+} 
+    

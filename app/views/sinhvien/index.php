@@ -16,6 +16,7 @@
                     <table class="table table-bordered table-hover align-middle text-center mb-0">
                         <thead class="table-primary">
                             <tr>
+                                <th>STT</th>
                                 <th>MSSV</th>
                                 <th>Tên</th>
                                 <th>Giới tính</th>
@@ -24,16 +25,18 @@
                         </thead>
                         <tbody>
                             <?php if (!empty($students) && is_array($students)): ?>
+                                <?php $stt = 1; ?>
                                 <?php foreach($students as $sinhvien): ?>
                                 <tr>
+                                    <td><?php echo $stt++; ?></td>
                                     <td><?php echo htmlspecialchars($sinhvien['mssv']); ?></td>
                                     <td><?php echo htmlspecialchars($sinhvien['ten']); ?></td>
                                     <td><?php echo htmlspecialchars($sinhvien['gioitinh']); ?></td>
                                     <td style="width: 100px;">
-                                        <a class="btn btn-sm btn-outline-primary w-100" href="/QLSV/public/sinhvien/edit/<?php echo $sinhvien['mssv']; ?>">Sửa</a>
+                                        <a class="btn btn-sm btn-outline-primary w-100" href="/QLSV/public/sinhvien/update/<?php echo $sinhvien['id']; ?>">Sửa</a>
                                     </td>
                                     <td style="width: 100px;">
-                                        <a class="btn btn-sm btn-outline-danger w-100" href="/QLSV/public/sinhvien/delete/<?php echo $sinhvien['mssv']; ?>" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
+                                        <a class="btn btn-sm btn-outline-danger w-100" href="/QLSV/public/sinhvien/delete/<?php echo $sinhvien['id']; ?>" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
