@@ -4,7 +4,7 @@
     </div>
     <div class="card-body">
         <form action="/QLSV/public/sinhvien/store" method="POST">
-            
+
             <div class="mb-3">
                 <label for="mssv" class="form-label fw-bold">Mã số sinh viên (MSSV):</label>
                 <input type="text" class="form-control" id="mssv" name="mssv" placeholder="Nhập MSSV..." required>
@@ -22,6 +22,19 @@
                     <option value="Nam">Nam</option>
                     <option value="Nữ">Nữ</option>
                     <option value="Khác">Khác</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="malop" class="form-label fw-bold">Chọn Lớp học:</label>
+                <select class="form-select" id="malop" name="malop">
+                    <option value="" selected>-- Chưa xếp lớp --</option>
+                    <?php if (!empty($listLopHoc)): ?>
+                        <?php foreach ($listLopHoc as $lop): ?>
+                            <option value="<?php echo htmlspecialchars($lop['malop']); ?>">
+                                <?php echo htmlspecialchars($lop['tenlop']); ?> (<?php echo htmlspecialchars($lop['malop']); ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
             </div>
 

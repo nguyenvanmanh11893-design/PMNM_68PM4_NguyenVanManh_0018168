@@ -14,30 +14,62 @@ class sinhvienModel{
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function createSinhvien($mssv, $ten, $gioitinh){
-        $sql = "INSERT INTO sinhvien (mssv, ten, gioitinh) VALUES (:mssv, :ten, :gioitinh)";
+    public function createSinhvien($mssv, $ten, $gioitinh, $malop = null) {
+        $sql = "INSERT INTO sinhvien (mssv, ten, gioitinh, malop) VALUES (:mssv, :ten, :gioitinh, :malop)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':mssv', $mssv);
         $stmt->bindParam(':ten', $ten);
         $stmt->bindParam(':gioitinh', $gioitinh);
+        $stmt->bindParam(':malop', $malop);
         return $stmt->execute();
     }
-    public function paging($limit, $offset , $search = ''){ {
-        $sql = "SELECT * FROM sinhvien LIMIT :limit OFFSET :offset";
+    public function paging($limit, $offset , $search = '', $malop = '', $sort = 'id_asc'){ 
+        // 1. Xây dựng điều kiện WHERE động
+        $where = " WHERE 1=1 "; // 1=1 là mẹo để nối chuỗi AND phía sau dễ dàng
+        $params = [];
+
+        // Tìm theo tên hoặc MSSV (Dùng LIKE)
+        if (!empty($search)) {
+            $where .= " AND (mssv LIKE :search OR ten LIKE :search) ";
+            $params[':search'] = "%$search%"; // Thêm % để tìm kiếm gần đúng
+        }
+
+        // Tìm theo Mã lớp (Tìm chính xác)
+        if (!empty($malop)) {
+            $where .= " AND malop = :malop ";
+            $params[':malop'] = $malop;
+        }
+
+        // 2. Xây dựng điều kiện ORDER BY (Bắt buộc gán cứng chuỗi, không dùng bindParam để tránh lỗi SQL)
+        $orderBy = " ORDER BY id ASC "; // Mặc định
+        switch ($sort) {
+            case 'mssv_asc':  $orderBy = " ORDER BY mssv ASC "; break;
+            case 'mssv_desc': $orderBy = " ORDER BY mssv DESC "; break;
+            case 'ten_asc':   $orderBy = " ORDER BY ten ASC "; break;
+            case 'ten_desc':  $orderBy = " ORDER BY ten DESC "; break;
+        }
+
+        $sql = "SELECT sinhvien.* ,lophoc.tenlop FROM sinhvien LEFT JOIN lophoc ON sinhvien.malop = lophoc.malop " . $where . $orderBy . " LIMIT :limit OFFSET :offset";
         $stmt = $this->conn->prepare($sql);
+        // Bind các tham số tìm kiếm (nếu có)
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        
         //tính tổng số bản ghi
-        $sqlCount = "SELECT COUNT(*) as total FROM sinhvien";
+        $sqlCount = "SELECT COUNT(*) as total FROM sinhvien" . $where;
         $stmtCount = $this->conn->query($sqlCount);
+        foreach ($params as $key => $val) {
+            $stmtCount->bindValue($key, $val);
+        }
         $totalRecord = $stmtCount->fetchColumn();
         $totalRecord = ceil($totalRecord / $limit);
         return ['sinhviens' => $result, 'totalpage' => $totalRecord];
-    }
+    
 }
 // Lấy thông tin 1 sinh viên theo MSSV để điền vào form Sửa
     public function getSinhvienById($id) {
@@ -49,12 +81,14 @@ class sinhvienModel{
     }
 
     // Thực thi câu lệnh Cập nhật sinh viên
-    public function updateSinhvien($id, $ten, $gioitinh) {
-        $sql = "UPDATE sinhvien SET ten = :ten, gioitinh = :gioitinh WHERE id = :id";
+    public function updateSinhvien($id, $mssv, $ten, $gioitinh, $malop ) {
+        $sql = "UPDATE sinhvien SET mssv = :mssv, ten = :ten, gioitinh = :gioitinh, malop = :malop WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':mssv', $mssv);
         $stmt->bindParam(':ten', $ten);
         $stmt->bindParam(':gioitinh', $gioitinh);
+        $stmt->bindParam(':malop', $malop);
         return $stmt->execute();
     }
 

@@ -13,22 +13,29 @@ class sinhvien extends Controller {
         $result = $sinhvienModel->paging($limit, $offset);
         $sinhviens = $result['sinhviens'];
         $totalpage = $result['totalpage'];
+        // Lấy danh sách lớp học để hiển thị trong view
+        $lophocModel = $this->model('lophocModel');
+        $listLopHoc = $lophocModel->getAllLopHoc() ?? [];
 
         // Chỉ gọi layout một lần, truyền đủ viewname và data
         $this->view('layout/mainLayout', [
             'viewname' => 'sinhvien/index',
-            'students' => $sinhviens,   // đặt tên rõ ràng
+            'students' => $sinhviens,   
             'title'    => 'Danh sách sinh viên',
             'totalpage' => $totalpage,
-            'currentpage' => $currentpage
+            'currentpage' => $currentpage,
+            'listLopHoc'  => $listLopHoc
         ]);
     }
 
     public function create() {
+        $lophocModel = $this->model('lophocModel');
+        $listLopHoc = $lophocModel->getAllLopHoc() ?? [];
         // Dùng layout cho form thêm sinh viên
         $this->view('layout/mainLayout', [
             'viewname' => 'sinhvien/create',
-            'title'    => 'Thêm sinh viên'
+            'title'    => 'Thêm sinh viên',
+            'listLopHoc' => $listLopHoc
         ]);
     }
     public function store() {
@@ -36,9 +43,10 @@ class sinhvien extends Controller {
             $mssv = $_POST['mssv'] ?? '';
             $ten = $_POST['ten'] ?? '';
             $gioitinh = $_POST['gioitinh'] ?? '';
+            $malop = $_POST['malop'] ?? '';
 
             $sinhvienModel = $this->model('sinhvienModel');
-            if ($sinhvienModel->createSinhvien($mssv, $ten, $gioitinh)) {
+            if ($sinhvienModel->createSinhvien($mssv, $ten, $gioitinh, $malop)) {
                 header('Location: /QLSV/public/sinhvien');
                 exit();
             } else {
@@ -48,13 +56,16 @@ class sinhvien extends Controller {
     }
     public function update($id = '') {
         $sinhvienModel = $this->model('sinhvienModel');
+        $lophocModel = $this->model('lophocModel');
+        $listLopHoc = $lophocModel->getAllLopHoc() ?? [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mssv = $_POST['mssv'] ?? '';
             $ten = $_POST['ten'] ?? '';
             $gioitinh = $_POST['gioitinh'] ?? '';
+            $malop = $_POST['malop'] ?? '';
 
-            if ($sinhvienModel->updateSinhvien($id, $mssv, $ten, $gioitinh)) {
+            if ($sinhvienModel->updateSinhvien($id, $mssv, $ten, $gioitinh, $malop)) {
                 header('Location: /QLSV/public/sinhvien');
                 exit();
             } else {
@@ -76,7 +87,8 @@ class sinhvien extends Controller {
             $this->view('layout/mainLayout', [
                 'viewname' => 'sinhvien/update',
                 'title'    => 'Cập nhật sinh viên',
-                'sinhvien' => $sinhvien 
+                'sinhvien' => $sinhvien ,
+                'listLopHoc' => $listLopHoc
             ]);
         }
     }

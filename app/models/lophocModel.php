@@ -65,5 +65,12 @@ class lophocModel {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+    // Hàm này lấy toàn bộ danh sách lớp học đổ ra thẻ <select>
+    public function getAllLopHoc() {
+        $sql = "SELECT * FROM lophoc";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
