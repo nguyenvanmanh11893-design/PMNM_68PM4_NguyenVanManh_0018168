@@ -1,5 +1,5 @@
-<footer class="mt-auto py-3 bg-white border-top">
-        <div class="container text-center">
-            <span class="text-muted">© 2024 Quản Lý Sinh Viên. All rights reserved.</span>
-        </div>
+<footer class="mt-auto py-3 shadow-lg" style="background: linear-gradient(90deg, #0d6efd, #0056b3);">
+    <div class="container text-center">
+        <span class="text-white">© 2026 Hệ thống Quản Lý Sinh Viên.</span>
+    </div>
 </footer>

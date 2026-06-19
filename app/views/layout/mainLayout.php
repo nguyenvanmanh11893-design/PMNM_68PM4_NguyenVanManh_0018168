@@ -25,7 +25,7 @@
         }
 
         .content {
-            width: 60%;
+            width: 90%;
             margin: 0 auto;
             padding: 20px 0;
         }
