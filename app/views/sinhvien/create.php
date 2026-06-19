@@ -1,4 +1,5 @@
-<div class="card shadow-sm">
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-sm w-100" style="max-width: 600px;">
     <div class="card-header bg-success text-white text-center">
         <h4 class="mb-0"><?php echo !empty($title) ? $title : 'Thêm sinh viên mới'; ?></h4>
     </div>
