@@ -3,31 +3,41 @@ require_once '../app/core/Controller.php';
 
 class sinhvien extends Controller {
     public function index($page = 1) {
-        // Lấy dữ liệu phân trang sinh viên từ model
         $currentpage = max(1, (int)$page); 
-        $limit = 3;
-        $offset = ($currentpage - 1) * $limit;
         
+        // 1. Nhận các tham số từ URL (nếu có), thiết lập giá trị mặc định
+        $limit = isset($_GET['limit']) ? max(1, (int)$_GET['limit']) : 5;
+        $search = $_GET['search'] ?? '';
+        $malop = $_GET['malop'] ?? '';
+        $sort = $_GET['sort'] ?? 'id_asc';
+        
+        $offset = ($currentpage - 1) * $limit;
 
+        // 2. Gọi model sinh viên và truyền đủ tham số
         $sinhvienModel = $this->model('sinhvienModel');
-        $result = $sinhvienModel->paging($limit, $offset);
+        $result = $sinhvienModel->paging($limit, $offset, $search, $malop, $sort);
         $sinhviens = $result['sinhviens'];
         $totalpage = $result['totalpage'];
-        // Lấy danh sách lớp học để hiển thị trong view
+        
+        // 3. Lấy danh sách lớp học để hiển thị lên Dropdown Lọc
         $lophocModel = $this->model('lophocModel');
         $listLopHoc = $lophocModel->getAllLopHoc() ?? [];
 
-        // Chỉ gọi layout một lần, truyền đủ viewname và data
+        // 4. Truyền dữ liệu ra View
         $this->view('layout/mainLayout', [
-            'viewname' => 'sinhvien/index',
-            'students' => $sinhviens,   
-            'title'    => 'Danh sách sinh viên',
-            'totalpage' => $totalpage,
+            'viewname'    => 'sinhvien/index',
+            'students'    => $sinhviens,   
+            'title'       => 'Danh sách sinh viên',
+            'totalpage'   => $totalpage,
             'currentpage' => $currentpage,
-            'listLopHoc'  => $listLopHoc
+            'listLopHoc'  => $listLopHoc,
+            // Truyền lại các tham số để giữ trạng thái trên form
+            'limit'       => $limit,
+            'search'      => $search,
+            'malop'       => $malop,
+            'sort'        => $sort
         ]);
     }
-
     public function create() {
         $lophocModel = $this->model('lophocModel');
         $listLopHoc = $lophocModel->getAllLopHoc() ?? [];

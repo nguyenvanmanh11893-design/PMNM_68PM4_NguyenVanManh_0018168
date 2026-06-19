@@ -30,23 +30,23 @@ class sinhvienModel{
 
         // Tìm theo tên hoặc MSSV (Dùng LIKE)
         if (!empty($search)) {
-            $where .= " AND (mssv LIKE :search OR ten LIKE :search) ";
+            $where .= " AND (sinhvien.mssv LIKE :search OR sinhvien.ten LIKE :search) ";
             $params[':search'] = "%$search%"; // Thêm % để tìm kiếm gần đúng
         }
 
         // Tìm theo Mã lớp (Tìm chính xác)
         if (!empty($malop)) {
-            $where .= " AND malop = :malop ";
+            $where .= " AND sinhvien.malop = :malop ";
             $params[':malop'] = $malop;
         }
 
         // 2. Xây dựng điều kiện ORDER BY (Bắt buộc gán cứng chuỗi, không dùng bindParam để tránh lỗi SQL)
-        $orderBy = " ORDER BY id ASC "; // Mặc định
+        $orderBy = " ORDER BY sinhvien.id ASC "; // Mặc định
         switch ($sort) {
-            case 'mssv_asc':  $orderBy = " ORDER BY mssv ASC "; break;
-            case 'mssv_desc': $orderBy = " ORDER BY mssv DESC "; break;
-            case 'ten_asc':   $orderBy = " ORDER BY ten ASC "; break;
-            case 'ten_desc':  $orderBy = " ORDER BY ten DESC "; break;
+            case 'mssv_asc':  $orderBy = " ORDER BY sinhvien.mssv ASC "; break;
+            case 'mssv_desc': $orderBy = " ORDER BY sinhvien.mssv DESC "; break;
+            case 'ten_asc':   $orderBy = " ORDER BY SUBSTRING_INDEX(sinhvien.ten, ' ', -1) ASC, sinhvien.ten ASC "; break;
+            case 'ten_desc':  $orderBy = " ORDER BY SUBSTRING_INDEX(sinhvien.ten, ' ', -1) DESC, sinhvien.ten DESC "; break;
         }
 
         $sql = "SELECT sinhvien.* ,lophoc.tenlop FROM sinhvien LEFT JOIN lophoc ON sinhvien.malop = lophoc.malop " . $where . $orderBy . " LIMIT :limit OFFSET :offset";
@@ -62,10 +62,11 @@ class sinhvienModel{
 
         //tính tổng số bản ghi
         $sqlCount = "SELECT COUNT(*) as total FROM sinhvien" . $where;
-        $stmtCount = $this->conn->query($sqlCount);
+        $stmtCount = $this->conn->prepare($sqlCount);
         foreach ($params as $key => $val) {
             $stmtCount->bindValue($key, $val);
         }
+        $stmtCount->execute();
         $totalRecord = $stmtCount->fetchColumn();
         $totalRecord = ceil($totalRecord / $limit);
         return ['sinhviens' => $result, 'totalpage' => $totalRecord];
